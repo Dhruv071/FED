@@ -1,121 +1,182 @@
-<html>
-  <html lang="en">
-    <head>
-      <title>Giphy</title>
-      <style>
-        main {
-          max-width: 800px;
-          margin: 20px auto;
-          padding: 20px;
-          text-align: center;
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        input {
-          padding: 10px;
-          width: 250px;
-          font-size: 16px;
-          border: 1px solid;
-          border-radius: 4px;
-        }
-        button {
-          padding: 10px 20px;
-          background-color: blue;
-          color: #fff;
-          border: none;
-          border-radius: 4px;
-          font-size: 16px;
-          margin-left: 10px;
-        }
-        .out {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-around;
-        }
-        img {
-          max-height: 200px;
-        }
-        figcaption {
-          margin-top: 5px;
-          font-size: 14px;
-        }
-      </style>
-    </head>
-    <body>
-      <main>
-        <center><h1>Giphy</h1></center>
-        <form>
-          <input id="search" placeholder="Search" />
-          <button id="btnSearch">Go</button>
-          <button id="btnRandom">Random Gif</button>
-          <button id="btnTrending">Trending GIFs</button>
-        </form>
-        <div class="out"></div>
-      </main>
-      <script>
-        const APIKEY = "OHJEWRMziwiQSLZKCXX7Kb343kx1OIgg";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giphy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      text-align: center;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-top: 0;
+    }
+    form {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: calc(100% - 120px);
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    button.search {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button.search:hover {
+      background-color: #0056b3;
+    }
+    .button-section {
+      display: flex;
+      justify-content: center;
+    }
+    .button-section button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .button-section button:hover {
+      background-color: #0056b3;
+    }
+    .out {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    figure {
+      margin: 10px;
+    }
+    img {
+      max-width: 200px;
+      max-height: 150px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    figcaption {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #666;
+      padding: 5px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 180px;
+    }
+    #actionMessage {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Giphy</h1>
+    <form>
+      <input type="text" id="search" placeholder="Search">
+      <button type="button" class="search" id="btnSearch">Search</button>
+    </form>
+    <div class="button-section">
+      <button type="button" id="btnRandom">Random Gif</button>
+      <button type="button" id="btnTrending">Trending GIFs</button>
+    </div>
+    <p id="actionMessage"></p>
+    <div class="out"></div>
+  </main>
+  <script>
+    const APIKEY = "OHJEWRMziwiQSLZKCXX7Kb343kx1OIgg";
 
-        function fetchGifs(url) {
-          fetch(url)
-            .then((response) => response.json())
-            .then((content) => {
-              console.log(content);
-              let out = document.querySelector(".out");
-              out.innerHTML = "";
+    function fetchGifs(url, action) {
+      fetch(url)
+        .then((response) => response.json())
+        .then((content) => {
+          const out = document.querySelector(".out");
+          const actionMessage = document.getElementById("actionMessage");
+          out.innerHTML = ""; // Clear previous results
 
-              if (content.data && Array.isArray(content.data)) {
-                content.data.forEach((gifData) => {
-                  let fig = document.createElement("figure");
-                  let img = document.createElement("img");
-                  let fc = document.createElement("figcaption");
+          // Display action message
+          actionMessage.textContent = `Showing ${action} GIFs:`;
 
-                  img.src = gifData.images.original.url;
-                  console.log(img.src);
+          if (content.data && Array.isArray(content.data)) {
+            content.data.forEach((gifData) => {
+              const fig = document.createElement("figure");
+              const img = document.createElement("img");
+              const fc = document.createElement("figcaption");
 
-                  fc.textContent = gifData.title;
-                  fig.appendChild(img);
-                  fig.appendChild(fc);
-                  out.appendChild(fig);
-                });
-              } else if (content.data && content.data.images) {
-                let fig = document.createElement("figure");
-                let img = document.createElement("img");
-                let fc = document.createElement("figcaption");
+              img.src = gifData.images.original.url;
+              fc.textContent = gifData.title;
 
-                img.src = content.data.images.original.url;
-                console.log(img.src);
-
-                fc.textContent = content.data.title;
-                fig.appendChild(img);
-                fig.appendChild(fc);
-                out.appendChild(fig);
-              }
-            })
-            .catch((err) => {
-              console.error(err);
+              fig.appendChild(img);
+              fig.appendChild(fc);
+              out.appendChild(fig);
             });
-        }
+          } else if (content.data && content.data.images) {
+            const fig = document.createElement("figure");
+            const img = document.createElement("img");
+            const fc = document.createElement("figcaption");
 
-        document.getElementById("btnSearch").addEventListener("click", (ev) => {
-          ev.preventDefault();
-          let url = `https://api.giphy.com/v1/gifs/search?api_key=${APIKEY}&limit=4&q=`;
-          let str = document.getElementById("search").value.trim();
-          url = url.concat(str);
-          fetchGifs(url);
-        });
+            img.src = content.data.images.original.url;
+            fc.textContent = content.data.title;
 
-        document.getElementById("btnRandom").addEventListener("click", (ev) => {
-          ev.preventDefault();
-          let url = `https://api.giphy.com/v1/gifs/random?api_key=${APIKEY}`;
-          fetchGifs(url);
+            fig.appendChild(img);
+            fig.appendChild(fc);
+            out.appendChild(fig);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
         });
-        document.getElementById("btnTrending").addEventListener("click", (ev) => {
-            ev.preventDefault();
-            let url = `https://api.giphy.com/v1/gifs/trending?api_key=${APIKEY}&limit=4`;
-            fetchGifs(url);
-          });
-      </script>
-    </body>
-  </html>
+    }
+
+    document.getElementById("btnSearch").addEventListener("click", () => {
+      const searchTerm = document.getElementById("search").value.trim();
+      if (searchTerm !== "") {
+        const url = `https://api.giphy.com/v1/gifs/search?api_key=${APIKEY}&limit=6&q=${encodeURIComponent(searchTerm)}`;
+        fetchGifs(url, `searched for '${searchTerm}'`);
+      }
+    });
+
+    document.getElementById("btnRandom").addEventListener("click", () => {
+      const url = `https://api.giphy.com/v1/gifs/random?api_key=${APIKEY}`;
+      fetchGifs(url, "random");
+    });
+
+    document.getElementById("btnTrending").addEventListener("click", () => {
+      const url = `https://api.giphy.com/v1/gifs/trending?api_key=${APIKEY}&limit=6`;
+      fetchGifs(url, "trending");
+    });
+  </script>
+</body>
 </html>
