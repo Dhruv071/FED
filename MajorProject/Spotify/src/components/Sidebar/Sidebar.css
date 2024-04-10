@@ -1,0 +1,71 @@
+/* Add custom styling for the Sidebar component */
+
+.sidebar {
+  width: 25%; /* Adjust the width as needed */
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin-top: 2rem;
+}
+
+.nav {
+  background-color: #282828; /* Sidebar navigation background color */
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #ffffff; /* Sidebar navigation link color */
+  text-decoration: none;
+}
+
+.nav a:hover {
+  color: #ffffff; /* Sidebar navigation link hover color */
+}
+
+.secondary_bg {
+  background-color: #1a1919; /* Secondary background color */
+}
+
+.btns a {
+  border-radius: 9999px; /* Rounded button corners */
+  padding: 0.5rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1); /* Button background color */
+  color: #ffffff; /* Button text color */
+  text-decoration: none;
+}
+
+.btns a:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Button hover background color */
+}
+
+.my-6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Scrollbar styling */
+.your_library {
+  height: 18rem;
+  overflow-y: scroll;
+}
+
+.your_library::-webkit-scrollbar {
+  width: 12px;
+  background-color: black;
+}
+
+.your_library::-webkit-scrollbar-thumb {
+  background-color: #ffffff75;
+  border-radius: 6px;
+}
+
+/* Add additional styling as needed */
