@@ -50,7 +50,7 @@ const Footer = () => {
           <li className="text-gray-400">About Ads</li>
           <li className="text-gray-400">Accessibility</li>
         </ul>
-        <h4 className="text-gray-400 text-sm">© 2023 Spotify AB</h4>
+        <h4 className="text-gray-400 text-sm">© 2024 Spotify AB</h4>
       </div>
     </div>
   );

@@ -1,9 +1,7 @@
 import React from 'react';
 import Layout from "../../Layout/Layout";
-import { FaAngleLeft, FaAngleRight, FaSearch, FaUser } from "react-icons/fa";
 import Card from "../Card/Card";
 import SongBar from "../MasterBar/SongBar";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useGlobalContext } from "../../states/Contet";
 import Footer from "../Footer/Footer";
@@ -26,21 +24,21 @@ const songs = [
   },
   {
     id: Math.random() * Date.now(),
-    title: "Mirchi Awards",
+    title: "Umbrella",
     artist: "Diljit Dosanjh",
     mp3: new Audio("/assets/mp3/Umbrella - Diljit Dosanjh.mp3"),
     img: "/assets/Diljit2.jpeg",
   },
   {
     id: Math.random() * Date.now(),
-    title: "Judaiyaan",
+    title: "Umbrella",
     artist: "Diljit Dosanjh",
     mp3: new Audio("/assets/mp3/Umbrella - Diljit Dosanjh.mp3"),
     img: "/assets/Diljit3.jpeg",
   },
   {
     id: Math.random() * Date.now(),
-    title: "Heeriye",
+    title: "Bachke Bachke",
     artist: "Karan",
     mp3: new Audio("/assets/mp3/Bachke Bachke - DjPunjab.Com.Se.mp3"),
     img: "/assets/karan.jpeg",

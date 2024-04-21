@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AiOutlineHeart, AiOutlinePlaySquare } from "react-icons/ai";
-import { IoMdSkipBackward, IoMdSkipForward } from "react-icons/io";
-import { CgScreen } from "react-icons/cg";
-import { BiRepeat, BiShuffle } from "react-icons/bi";
+import { BiShuffle, BiRepeat } from "react-icons/bi";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { PiMicrophoneStageDuotone, PiQueueLight } from "react-icons/pi";
+import { IoMdSkipBackward, IoMdSkipForward } from "react-icons/io";
 import { HiSpeakerXMark, HiSpeakerWave } from "react-icons/hi2";
-import { BsArrowsAngleContract, BsSpeakerFill } from "react-icons/bs";
 import {
     pauseMaster,
     playMaster,
@@ -15,7 +11,7 @@ import {
 } from "../../states/Actors/SongActor";
 import { useGlobalContext } from "../../states/Contet";
 import "./SongBar.css";
-import  songs  from "../Home/Home";
+import songs from "../Home/Home";
 
 const SongBar = () => {
     const { masterSong, isPlaying } = useSelector((state) => state.mainSong);
@@ -40,26 +36,6 @@ const SongBar = () => {
         }
     };
 
-    const addToLiked = async() => {
-        console.log(masterSong.mp3)
-        let data = JSON.stringify({
-            song_mp3:masterSong.mp3.src,
-            song_title:masterSong.title,
-            song_artist:masterSong.artist,
-            song_thumbnail:masterSong.img,
-        })
-        const res = await fetch('http://localhost:5000/api/playlist/like', {
-            method:"POST",
-            headers:{
-                'Content-Type':"application/json",
-                token:localStorage.getItem('token')
-            },
-            body:data,
-        })
-
-        let d = await res.json();
-        console.log(d)
-    };
 
     useEffect(() => {
         let interval;
@@ -72,14 +48,14 @@ const SongBar = () => {
                         dispatch(pauseMaster());
                         resetEverything();
                     } else {
-                        setProgress(
-                            Math.round(
-                                (masterSong.mp3.currentTime /
-                                    masterSong.mp3.duration) *
-                                    100
-                            )
-                        );
+                        // Update the progress state first
+                        const newProgress = Math.round((masterSong.mp3.currentTime / masterSong.mp3.duration) * 100);
+                        setProgress(newProgress);
                         setCurrTime(formatTime(masterSong.mp3.currentTime));
+
+                        // Calculate the color based on the new progress
+                        const color = `rgb(${255 - newProgress * 2.55}, ${newProgress * 2.55}, 0)`;
+                        document.querySelector('.active_progress').style.backgroundColor = color;
                     }
                 }, 1000);
             } else {
@@ -88,6 +64,7 @@ const SongBar = () => {
         }
         return () => clearInterval(interval);
     }, [masterSong, isPlaying]);
+
 
     const changeProgress = (e) => {
         setProgress(e.target.value);
@@ -100,20 +77,22 @@ const SongBar = () => {
     const changeVolume = (e) => {
         setVolume(e.target.value);
         masterSong.mp3.volume = e.target.value / 100;
+
+        // Change color of volume bar
+        const color = `rgb(${255 - e.target.value * 2.55}, ${e.target.value * 2.55}, 0)`;
+        document.querySelector('#volume').style.backgroundColor = color;
     };
 
     const formatTime = (durationInSeconds) => {
         let minutes = Math.floor(durationInSeconds / 60);
         let seconds = Math.round(durationInSeconds % 60);
 
-        let formattedDuration = `${minutes < 10 ? "0" + minutes : minutes}:${
-            seconds < 9 ? "0" + seconds : seconds
-        }`;
+        let formattedDuration = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
         return formattedDuration;
     };
 
     const backwardSong = () => {
-        if(songIdx <= 0 )
+        if (songIdx <= 0)
             return;
         if (masterSong.mp3) {
             masterSong?.mp3?.pause();
@@ -121,11 +100,11 @@ const SongBar = () => {
         }
         resetEverything();
         setSongIdx((prevstate) => prevstate - 1);
-        dispatch(playSong(songs[songIdx-1]));
+        dispatch(playSong(songs[songIdx - 1]));
     };
 
     const forwardSong = () => {
-        if(songIdx >= 5-1)
+        if (songIdx >= 5 - 1)
             return;
         if (masterSong.mp3) {
             masterSong?.mp3?.pause();
@@ -133,7 +112,7 @@ const SongBar = () => {
         }
         resetEverything();
         setSongIdx((prevstate) => prevstate + 1);
-        dispatch(playSong(songs[songIdx+1]));
+        dispatch(playSong(songs[songIdx + 1]));
     };
 
     return (
@@ -149,7 +128,6 @@ const SongBar = () => {
                             {masterSong?.artist || "Diljit Dosanjh"}
                         </span>
                     </div>
-                    <AiOutlineHeart onClick={addToLiked} className="ml-3 cursor-pointer hover:text-green-400" />
                 </div>
             </div>
             <div className="w-5/12">
@@ -171,7 +149,6 @@ const SongBar = () => {
                             <FaPlay className="text-black text-lg" />
                         </button>
                     )}
-                    {/* <IoMdSkipForward onClick={forwardSong} /> */}
                     <IoMdSkipForward />
                     <BiRepeat />
                 </div>
@@ -189,14 +166,18 @@ const SongBar = () => {
                             max={100}
                         />
                         <div
-                            className={`active_progress w-[${progress}%]`}
+                            className="active_progress"
+                            style={{
+                                width: `${progress}%`,
+                                backgroundColor: `rgb(${255 - progress * 2.55}, ${progress * 2.55}, 0)`
+                            }}
                         ></div>
                     </div>
                     <span className="text-xs">{duration}</span>
                 </div>
             </div>
             <div className="w-2/12 flex items-center gap-2">
-               
+
                 {volume <= 0 && <HiSpeakerXMark className="text-2xl" />}
                 {volume > 0 && <HiSpeakerWave className="text-2xl" />}
                 <div className="relative w-full flex items-center">
@@ -212,10 +193,14 @@ const SongBar = () => {
                     />
                     <div
                         id="volume"
-                        className={`active_progress w-[${volume}%]`}
+                        className="active_progress"
+                        style={{
+                            width: `${volume}%`,
+                            backgroundColor: `rgb(${255 - volume * 2.55}, ${volume * 2.55}, 0)`
+                        }}
                     ></div>
                 </div>
-                
+
             </div>
         </div>
     );
